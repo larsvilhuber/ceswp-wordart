@@ -1,7 +1,7 @@
-# SOLE 2015 Posters as a picture
+# CES Working Papers as a picture
 Lars Vilhuber  
 
-======================
+
 
 
 
@@ -18,9 +18,7 @@ To produce this graph, we downloaded the ReDif-formatted metadata for the CES Wo
 
 ```r
 # Source: titles of all published papers
-#tmp2 <- read.delim("ceswp_1988_to_2013.rdf.txt", sep="",header = FALSE)
-#tmp <- read.delim("ceswp_1988_to_2013.rdf.txt", sep=":",header = FALSE)
-tmp <- fread("iconv -t UTF8 -c < ceswp_1988_to_2013.rdf.txt | grep -e '^Abstract:' | sed 's/^Abstract:/Abstract|/'", sep="|",header = FALSE)
+tmp <- fread("iconv -t UTF8 -c < ceswp_20160204.rdf | grep -e '^Abstract:' | sed 's/^Abstract:/Abstract|/'", sep="|",header = FALSE)
 
 accepted <- tmp[tmp$V1=="Abstract",]
 ```
@@ -72,75 +70,6 @@ find                  397
 
 *******************
  * The code behind this endeavor is available at [github.com/larsvilhuber/ceswp-wordart](https://github.com/larsvilhuber/ceswp-wordart)
- * This document was produced using
+ * This document was produced using R, RStudio.
+ 
 
-```r
-R.Version()
-```
-
-```
-## $platform
-## [1] "x86_64-suse-linux-gnu"
-## 
-## $arch
-## [1] "x86_64"
-## 
-## $os
-## [1] "linux-gnu"
-## 
-## $system
-## [1] "x86_64, linux-gnu"
-## 
-## $status
-## [1] ""
-## 
-## $major
-## [1] "3"
-## 
-## $minor
-## [1] "2.3"
-## 
-## $year
-## [1] "2015"
-## 
-## $month
-## [1] "12"
-## 
-## $day
-## [1] "10"
-## 
-## $`svn rev`
-## [1] "69752"
-## 
-## $language
-## [1] "R"
-## 
-## $version.string
-## [1] "R version 3.2.3 (2015-12-10)"
-## 
-## $nickname
-## [1] "Wooden Christmas-Tree"
-```
-
-```r
-Sys.info()
-```
-
-```
-##                                                 sysname 
-##                                                 "Linux" 
-##                                                 release 
-##                                     "3.16.7-29-desktop" 
-##                                                 version 
-## "#1 SMP PREEMPT Fri Oct 23 00:46:04 UTC 2015 (6be6a97)" 
-##                                                nodename 
-##                                              "zotique2" 
-##                                                 machine 
-##                                                "x86_64" 
-##                                                   login 
-##                                              "vilhuber" 
-##                                                    user 
-##                                              "vilhuber" 
-##                                          effective_user 
-##                                              "vilhuber"
-```

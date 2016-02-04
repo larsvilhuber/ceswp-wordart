@@ -1,5 +1,5 @@
 ---
-title: "SOLE 2015 Posters as a picture"
+title: "CES Working Papers as a picture"
 author: "Lars Vilhuber"
 output:
   pdf_document:
@@ -8,7 +8,7 @@ output:
     keep_md: yes
 ---
 
-======================
+
 ```{r libraries,echo=FALSE,cache=FALSE,message=FALSE}
 library(data.table)
 library(tm)
@@ -19,9 +19,7 @@ library(knitr)
 ```{r readin,echo=FALSE,message=FALSE,cache=TRUE}
 
 # Source: titles of all published papers
-#tmp2 <- read.delim("ceswp_1988_to_2013.rdf.txt", sep="",header = FALSE)
-#tmp <- read.delim("ceswp_1988_to_2013.rdf.txt", sep=":",header = FALSE)
-tmp <- fread("iconv -t UTF8 -c < ceswp_1988_to_2013.rdf.txt | grep -e '^Abstract:' | sed 's/^Abstract:/Abstract|/'", sep="|",header = FALSE)
+tmp <- fread("iconv -t UTF8 -c < ceswp_20160204.rdf | grep -e '^Abstract:' | sed 's/^Abstract:/Abstract|/'", sep="|",header = FALSE)
 
 accepted <- tmp[tmp$V1=="Abstract",]
 ```
@@ -54,7 +52,7 @@ Or: the power of **`r most_freq`**.
 
 A picture is worth a thousand words. Or in this case `r nrow(as.data.frame(findFreqTerms(TDM, 1)))` words - the number of distinct words in titles of the `r nrow(accepted)` papers accepted.
 
-```{r graph, echo=FALSE, fig.width=7, message=FALSE,cache=TRUE}
+```{r graph, echo=FALSE, fig.width=7, message=FALSE,cache=TRUE,warning=FALSE}
 # graph the whole thing
 palette <- brewer.pal(9,"PuBuGn")[-(1:4)]
 # if producing the webpage, you need to comment out the following two lines
@@ -102,8 +100,9 @@ kable(t)
 
 *******************
  * The code behind this endeavor is available at [github.com/larsvilhuber/ceswp-wordart](https://github.com/larsvilhuber/ceswp-wordart)
- * This document was produced using
-```{r environment, echo=TRUE}
-R.Version()
-Sys.info()
+ * This document was produced using R, RStudio.
+ 
+```{r environment, echo=FALSE,warning=FALSE,error=FALSE}
+#R.Version()
+#Sys.info()
 ```
