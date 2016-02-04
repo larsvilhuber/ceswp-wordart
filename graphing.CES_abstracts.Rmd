@@ -1,0 +1,109 @@
+---
+title: "SOLE 2015 Posters as a picture"
+author: "Lars Vilhuber"
+output:
+  pdf_document:
+    toc: yes
+  html_document:
+    keep_md: yes
+---
+
+======================
+```{r libraries,echo=FALSE,cache=FALSE,message=FALSE}
+library(data.table)
+library(tm)
+library(wordcloud)
+library(knitr)
+```
+
+```{r readin,echo=FALSE,message=FALSE,cache=TRUE}
+
+# Source: titles of all published papers
+#tmp2 <- read.delim("ceswp_1988_to_2013.rdf.txt", sep="",header = FALSE)
+#tmp <- read.delim("ceswp_1988_to_2013.rdf.txt", sep=":",header = FALSE)
+tmp <- fread("iconv -t UTF8 -c < ceswp_1988_to_2013.rdf.txt | grep -e '^Abstract:' | sed 's/^Abstract:/Abstract|/'", sep="|",header = FALSE)
+
+accepted <- tmp[tmp$V1=="Abstract",]
+```
+
+
+```{r parse,echo=FALSE,message=FALSE,cache=TRUE}
+doc.vec <- VectorSource(t(accepted))
+doc.corpus <- Corpus(doc.vec)
+doc.corpus <- tm_map(doc.corpus, content_transformer(function(x) iconv(enc2utf8(x), sub = "byte")))
+doc.corpus <- tm_map(doc.corpus, content_transformer(tolower))
+#doc.corpus.nw <- tm_map(doc.corpus, stripWhitespace)
+doc.corpus <- tm_map(doc.corpus, removePunctuation)
+doc.corpus <- tm_map(doc.corpus, removeNumbers) 
+doc.corpus <- tm_map(doc.corpus, removeWords, stopwords("english"))
+doc.corpus <- tm_map(doc.corpus, removeWords, c("the","abstract","paper","using"))
+
+TDM <- TermDocumentMatrix(doc.corpus)
+# find the most frequent word
+m <- as.matrix(TDM)
+v <- sort(rowSums(m),decreasing = TRUE)
+
+try_max <- v[[1]]
+try_five <- v[[5]]
+restrict_num <- 30
+top_100 <- v[[100]]
+most_freq <- findFreqTerms(TDM,try_max)
+#
+```
+Or: the power of **`r most_freq`**.
+
+A picture is worth a thousand words. Or in this case `r nrow(as.data.frame(findFreqTerms(TDM, 1)))` words - the number of distinct words in titles of the `r nrow(accepted)` papers accepted.
+
+```{r graph, echo=FALSE, fig.width=7, message=FALSE,cache=TRUE}
+# graph the whole thing
+palette <- brewer.pal(9,"PuBuGn")[-(1:4)]
+# if producing the webpage, you need to comment out the following two lines
+#myscale <- c(2,.1)
+wordcloud(rownames(as.matrix(TDM)), rowSums(as.matrix(TDM)), min.freq = top_100, color = palette,random.order=FALSE)
+```
+
+To produce this graph, we downloaded the ReDif-formatted metadata for the CES Working Paper archive, and read in the Abstract field.
+```{r, eval=FALSE, ref.label='readin'}
+```
+We then used the _R text mining library_  to clean and parse the titles:
+```{r, eval=FALSE, ref.label='parse'}
+```
+which generated a "corpus" of documents.
+```{r corpus,echo=FALSE}
+#summary(doc.corpus)
+```
+
+In fact, we lied somewhat above: we did not show **`r nrow(as.data.frame(findFreqTerms(TDM, 1)))`** words, but rather, for the sake of clarity, restricted ourselves to the top 100 words. If we had instead wanted to show the 
+**`r nrow(as.data.frame(findFreqTerms(TDM, restrict_num)))`** words with at least `r restrict_num` mentions in the (cleaned) corpus, we would have obtained the [following graph](graphing.CES_n`r restrict_num`.png):
+
+```{r graph_all_titles, fig.width=7, message=FALSE,warning=FALSE,echo=FALSE,fig.keep='high',cache=TRUE}
+#myscale <- c(2,.1)
+wordcloud(rownames(as.matrix(TDM)), rowSums(as.matrix(TDM)), min.freq = restrict_num, color = palette, rot.per = 0.3,random.order=FALSE)
+```
+```{r graph3, message=FALSE,warning=FALSE,echo=FALSE,cache=TRUE}
+png(paste("graphing.CES_n",restrict_num,".png",sep = ""),height=1600,width=1600,res=600)
+myscale <- c(2,.1)
+wordcloud(rownames(as.matrix(TDM)), rowSums(as.matrix(TDM)), scale=myscale, min.freq = restrict_num, color = palette, rot.per = 0.3,random.order=FALSE)
+message <- try(dev.off(),silent=TRUE)
+myscale <- c(5,.1)
+png(paste("graphing.CES_n",restrict_num,".HIRES1.png",sep = ""),height=1600,width=1600,res=300)
+wordcloud(rownames(as.matrix(TDM)), rowSums(as.matrix(TDM)), scale=myscale, min.freq = restrict_num, color = palette, rot.per = 0.3,random.order=FALSE)
+message <- try(dev.off(),silent=TRUE)
+```
+
+For the curious, while the most frequent word is **`r findFreqTerms(TDM,try_max)`**, the top **`r nrow(as.data.frame(findFreqTerms(TDM,try_five)))`** are:
+```{r topfive, echo=FALSE,cache=TRUE,message=FALSE}
+t<-as.data.frame(head(v,5))
+names(t)<-c("Frequency")
+kable(t)
+```
+
+
+
+*******************
+ * The code behind this endeavor is available at [github.com/larsvilhuber/ceswp-wordart](https://github.com/larsvilhuber/ceswp-wordart)
+ * This document was produced using
+```{r environment, echo=TRUE}
+R.Version()
+Sys.info()
+```
