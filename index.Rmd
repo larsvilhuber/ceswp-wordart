@@ -1,0 +1,31 @@
+---
+title: "CES WP Posters"
+author: Lars Vilhuber
+output:
+  html_document:
+    keep_md: true
+---
+
+=============================
+
+These pages are an effort to visualize the themes in abstracts among [Center for Economic Studies Working Papers](https://ideas.repec.org/s/cen/wpaper.html). 
+
+
+
+Tools
+-----
+ * [RStudio](http://rstudio.com), a really nice IDE for R and other things
+ * [R Markdown](http://rmarkdown.rstudio.com/) ([how to use it in RStudio](http://www.rstudio.com/ide/docs/authoring/using_markdown))
+ * [knitr](http://yihui.name/knitr/)
+ * R libraries:
+    - library([tm](http://cran.r-project.org/web/packages/tm/index.html)) 
+    - library([wordcloud](http://cran.r-project.org/web/packages/wordcloud/index.html))
+
+Sources
+------
+The code behind this endeavor is available at 
+
+Author
+-----
+[Lars Vilhuber](mailto:lars.vilhuber@cornell.edu), [Cornell University](http://www.cornell.edu) [Economics Department](http://economics.cornell.edu) and [Labor Dynamics Institute](http://www.ilr.cornell.edu/ldi/).
+
